@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!--配置相关文件-->
+<configuration>
+	<!--配置jdbc.properties-->
+	<properties resource="jdbc.properties"/>
+<!--这样的配置则更加简单，实用：扫描所有该包下的类-->
+	<typeAliases>
+		<package name="cn.rayest.model"/>
+	</typeAliases>
+
+	<!--配置开发环境-->
+	<environments default="development">
+		<environment id="development">
+			<!-- 事务管理 -->
+			<transactionManager type="JDBC" />
+			<!-- 配置数据源，数据池 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="${jdbc.driverClassName}" />
+				<property name="url" value="${jdbc.url}" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<!-- 引入映射文件，正确的路径 -->
+	<mappers>
+		<mapper resource="StudentMapper.xml" />
+	</mappers>
+
+</configuration>

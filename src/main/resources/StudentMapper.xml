@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 映射命名空间，persistence -->
+<mapper namespace="cn.rayest.persistence.StudentPersistence">
+
+
+	<!-- 当程序的并发访问量很大时，需要考虑使用缓存机制进行优化
+	     1. mybatis 默认启动一级缓存。
+	        即：同一个 SqlSession 接口对象调用了相同的 select 语句，则直接从缓存中返回结果，而不是查询一次数据库
+	     2. 也可以自己设置为二级缓存，二级缓存是全局的
+	     3. 默认情况下，select 使用缓存，insert update delete 不使用缓存
+	-->
+
+	<!--  缓存的属性设置
+	     1. size：表示缓存 cache 中能容纳的最大元素数。默认为 1024
+	     2. flushInterval：定义缓存刷新周期，以毫秒计
+	     3. eviction：定义缓存移除机。默认为 LRU：最近最少使用
+	     4. readOnly：默认 false。如果设置为 true，则缓存只能读
+    -->
+	<cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"/>
+
+	<resultMap type="Student" id="StudentResult">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="age" column="age"/>
+	</resultMap>
+
+    <!-- 动态sql -->
+    <!-- if -->
+	<select id="searchStudents" parameterType="Map" resultMap="StudentResult">
+		 SELECT * FROM t_student
+		 WHERE gradeId=#{gradeId}
+		 <if test="name!=null">
+			 AND name LIKE #{name}
+		 </if>
+		<if test="age!=null">
+			AND age=#{age}
+		</if>
+	</select>
+
+    <!-- choose -->
+	<select id="searchStudents2" parameterType="Map" resultMap="StudentResult">
+		select * from t_student
+		<choose>
+			<when test="searchBy=='gradeId'">
+				where gradeId=#{gradeId}
+			</when>
+			<when test="searchBy=='name'">
+				where name like #{name}
+			</when>
+			<otherwise>
+				where age=#{age}
+			</otherwise>
+		</choose>
+
+	</select>
+
+    <!-- where -->
+	<select id="searchStudents3" parameterType="Map" resultMap="StudentResult">
+		select * from t_student
+		<where>
+			<if test="gradeId!=null">
+				gradeId=#{gradeId}
+			</if>
+			<if test="name!=null">
+				and name like #{name}
+			</if>
+			<if test="age!=nulll">
+				and age=#{age}
+			</if>
+		</where>
+	</select>
+
+    <!-- foreach -->
+    <select id="searchStudents5" parameterType="Map" resultMap="StudentResult">
+        select * from t_student
+        <if test="gradeIds!=null">
+            <where>
+                gradeId in  /* 如：gradeId in (1, 2, 3, 4, 5, 6, 7)，故有如下拼接语法 */
+                <foreach item="gradeId" collection="gradeIds" open="(" separator="," close=")">
+                    #{gradeId}
+                </foreach>
+            </where>
+        </if>
+    </select>
+
+    <!-- 亦常用到：update 用到的 set -->
+    <update id="updateStudent" parameterType="Student" flushCache="true">
+        update t_student
+        <set>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="age!=null">
+                age=#{age},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+    <!-- 为避免学习混乱，转换为对 t_student 的操作 -->
+    <!-- 插入 bblog 和 cblog -->
+    <insert id="insertStudent" parameterType="Student">
+        insert into t_student (id, name, age, pic, remark)values(null,#{name},#{age},#{pic},#{remark});
+    </insert>
+
+    <!-- 读取 bblog 和 cblog -->
+    <select id="getStudentById" parameterType="Integer" resultType="Student">
+        select * from t_student where id=#{id}
+    </select>
+
+    <!-- 逻辑分页 -->
+    <select id="findStudents" resultMap="StudentResult" useCache="true" flushCache="false">
+        select * from t_student
+    </select>
+
+    <!-- 物理分页 -->
+    <select id="findStudents2" parameterType="Map" resultMap="StudentResult">
+        select * from t_student
+        <if test="start!=null and size!=null">
+            limit #{start}, #{size}
+        </if>
+    </select>
+
+
+</mapper>
