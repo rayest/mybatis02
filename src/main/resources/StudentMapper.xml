@@ -88,7 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <!-- 亦常用到：update 用到的 set -->
-    <update id="updateStudent" parameterType="Student" flushCache="true">
+    <update id="update" parameterType="Student" flushCache="true">
         update t_student
         <set>
             <if test = "name != null">
@@ -104,22 +104,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 为避免学习混乱，转换为对 t_student 的操作 -->
     <!-- 插入 bblog 和 cblog -->
-    <insert id="insertStudent" parameterType="Student">
+    <insert id="create" parameterType="Student">
         insert into t_student (id, name, age, pic, remark) values (null, #{name}, #{age}, #{pic}, #{remark});
     </insert>
 
     <!-- 读取 bblog 和 cblog -->
-    <select id="getStudentById" parameterType="Integer" resultType="Student">
+    <select id="findById" parameterType="Integer" resultType="Student">
         select * from t_student where id = #{id}
     </select>
 
     <!-- 逻辑分页 -->
-    <select id="findStudents" resultMap="StudentResult" useCache="true" flushCache="false">
+    <select id="loadStudents" resultMap="StudentResult" useCache="true" flushCache="false">
         select * from t_student
     </select>
 
     <!-- 物理分页 -->
-    <select id="findStudents2" parameterType="Map" resultMap="StudentResult">
+    <select id="loadWithPage" parameterType="Map" resultMap="StudentResult">
         select * from t_student
         <if test = "start != null and size != null">
             limit #{start}, #{size}
