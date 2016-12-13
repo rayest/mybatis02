@@ -32,12 +32,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- if -->
 	<select id="searchStudents" parameterType="Map" resultMap="StudentResult">
 		 SELECT * FROM t_student
-		 WHERE gradeId=#{gradeId}
-		 <if test="name!=null">
+		 WHERE gradeId = #{gradeId}
+		 <if test = "name != null">
 			 AND name LIKE #{name}
 		 </if>
-		<if test="age!=null">
-			AND age=#{age}
+		<if test = "age != null">
+			AND age = #{age}
 		</if>
 	</select>
 
@@ -45,14 +45,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="searchStudents2" parameterType="Map" resultMap="StudentResult">
 		select * from t_student
 		<choose>
-			<when test="searchBy=='gradeId'">
+			<when test = "searchBy == 'gradeId'">
 				where gradeId=#{gradeId}
 			</when>
-			<when test="searchBy=='name'">
+			<when test = "searchBy == 'name'">
 				where name like #{name}
 			</when>
 			<otherwise>
-				where age=#{age}
+				where age = #{age}
 			</otherwise>
 		</choose>
 
@@ -62,14 +62,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="searchStudents3" parameterType="Map" resultMap="StudentResult">
 		select * from t_student
 		<where>
-			<if test="gradeId!=null">
-				gradeId=#{gradeId}
+			<if test = "gradeId != null">
+				gradeId = #{gradeId}
 			</if>
-			<if test="name!=null">
+			<if test = "name != null">
 				and name like #{name}
 			</if>
-			<if test="age!=nulll">
-				and age=#{age}
+			<if test = "age != null">
+				and age = #{age}
 			</if>
 		</where>
 	</select>
@@ -77,10 +77,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- foreach -->
     <select id="searchStudents5" parameterType="Map" resultMap="StudentResult">
         select * from t_student
-        <if test="gradeIds!=null">
+        <if test = "gradeIds != null">
             <where>
                 gradeId in  /* 如：gradeId in (1, 2, 3, 4, 5, 6, 7)，故有如下拼接语法 */
-                <foreach item="gradeId" collection="gradeIds" open="(" separator="," close=")">
+                <foreach item = "gradeId" collection = "gradeIds" open ="(" separator = "," close = ")">
                     #{gradeId}
                 </foreach>
             </where>
@@ -91,26 +91,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateStudent" parameterType="Student" flushCache="true">
         update t_student
         <set>
-            <if test="name!=null">
-                name=#{name},
+            <if test = "name != null">
+                name = #{name},
             </if>
-            <if test="age!=null">
-                age=#{age},
+            <if test = "age != null">
+                age = #{age},
             </if>
         </set>
-        where id=#{id}
+        where id = #{id}
     </update>
 
 
     <!-- 为避免学习混乱，转换为对 t_student 的操作 -->
     <!-- 插入 bblog 和 cblog -->
     <insert id="insertStudent" parameterType="Student">
-        insert into t_student (id, name, age, pic, remark)values(null,#{name},#{age},#{pic},#{remark});
+        insert into t_student (id, name, age, pic, remark) values (null, #{name}, #{age}, #{pic}, #{remark});
     </insert>
 
     <!-- 读取 bblog 和 cblog -->
     <select id="getStudentById" parameterType="Integer" resultType="Student">
-        select * from t_student where id=#{id}
+        select * from t_student where id = #{id}
     </select>
 
     <!-- 逻辑分页 -->
@@ -121,7 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- 物理分页 -->
     <select id="findStudents2" parameterType="Map" resultMap="StudentResult">
         select * from t_student
-        <if test="start!=null and size!=null">
+        <if test = "start != null and size != null">
             limit #{start}, #{size}
         </if>
     </select>
